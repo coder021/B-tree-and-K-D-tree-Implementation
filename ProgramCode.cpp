@@ -30,7 +30,8 @@ public:
     int del();
     int callSearch(int);
     struct node *search(struct node *, int);
-    void display();
+    void callDisplay();
+    void display(struct node*);
 
     ~BTree()
     {
@@ -42,7 +43,7 @@ int main(void)
     int btree_order;
     printf("Enter the order of B Tree: ");
     scanf("%d", &btree_order);
-    BTree(btree_order - 1, btree_order) b;
+    BTree b(btree_order - 1, btree_order);
 }
 
 // Method to insert into a b tree
@@ -81,8 +82,26 @@ BTree::node *BTree::search(struct node *temp, int num)
     return search(temp->child[i], num);
 }
 
-// Method to display b tree
-void BTree::display()
+// Method to call the display method
+void BTree::callDisplay()
 {
-    
+    display(m_root);
+}
+
+// Method to display b tree
+void BTree::display(struct node* temp)
+{
+    int i;
+    for (i = 0; i < temp->n; i++)
+    {
+        if (temp->leaf == false)
+        {
+            display(temp->child[i]);
+        }
+        printf("%d ", temp->key[i]);
+    }
+    if (temp->leaf == false)
+    {
+        display(temp->child[i]);
+    }
 }
