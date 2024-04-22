@@ -44,6 +44,41 @@ int main(void)
     printf("Enter the order of B Tree: ");
     scanf("%d", &btree_order);
     BTree b(btree_order - 1, btree_order);
+    int ch = 0;
+    while (ch != 5)
+    {
+        printf("\nMenu:\n1. Insert\n2. Delete\n3. Search\n4. Display\n5. Exit\n\nEnter your choice: ");
+        scanf("%d", &ch);
+        switch (ch)
+        {
+            case 1:
+            {
+                break;
+            }
+            case 2:
+            {
+                break;
+            }
+            case 3:
+            {
+                break;
+            }
+            case 4:
+            {
+                b.callDisplay();
+                break;
+            }
+            case 5:
+            {
+                printf("Exiting... Thank you!\n");
+                break;
+            }
+            default:
+            {
+                printf("Enter valid choice!\n");
+            }
+        }
+    }
 }
 
 // Method to insert into a b tree
