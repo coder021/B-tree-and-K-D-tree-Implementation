@@ -1,6 +1,7 @@
 // Program to implement B tree using Single linked list
 
 #include <stdio.h>
+#include <stdlib.h>
 
 class BTree
 {
@@ -9,37 +10,39 @@ private:
     int MAX_CHILDREN;
     struct node
     {
-        int n; // no. of keys in the node
-        int key[MAX_KEYS]; // 
-        node *child[MAX_CHILDREN];
+        int n;    // no. of keys in the node
+        int *key; //
+        struct node **child;
         bool leaf;
     };
+    node* m_root;
 
 public:
     BTree(int keys, int children)
     {
         MAX_KEYS = keys;
         MAX_CHILDREN = children;
+        m_root->key = (int *)malloc(MAX_KEYS * sizeof(int));
+        m_root->child = (struct node **)malloc(MAX_CHILDREN * sizeof(struct node));
     }
 
     int insert();
     int del();
     int callSearch(int);
     struct node *search(struct node *, int);
+    void display();
 
     ~BTree()
     {
-
     }
 };
 
 int main(void)
 {
-    BTree b;
     int btree_order;
     printf("Enter the order of B Tree: ");
     scanf("%d", &btree_order);
-
+    BTree(btree_order - 1, btree_order) b;
 }
 
 // Method to insert into a b tree
@@ -49,7 +52,7 @@ int main(void)
 // Method to call the search method
 int BTree::callSearch(int num)
 {
-    if (search(root, num) == NULL)
+    if (search(m_root, num) == NULL)
     {
         return 1;
     }
@@ -62,6 +65,24 @@ int BTree::callSearch(int num)
 // Method to search in a b tree
 BTree::node *BTree::search(struct node *temp, int num)
 {
+    int i = 0;
+    while (i < temp->n && num > temp->key[i])
+    {
+        i++;
+    }
+    if (i < temp->n && num == temp->key[i])
+    {
+        return temp;
+    }
+    if (temp->leaf)
+    {
+        return NULL;
+    }
+    return search(temp->child[i], num);
 }
 
 // Method to display b tree
+void BTree::display()
+{
+    
+}
