@@ -31,11 +31,15 @@ public:
     void insertNonFull(struct node *, int);
     void insert(int);
     void splitChild(int, struct node *, struct node *);
-    int del();
+    void deletion(int);
     int callSearch(int);
     struct node *search(struct node *, int);
     void callDisplay();
     void display(struct node *);
+    int getPredeccesor(int);
+    int getSuccessor(int);
+    void fill(int);
+    void removeFromNonLeaf(int);
 
     ~BTree()
     {
@@ -263,5 +267,113 @@ void BTree::display(struct node *temp)
     if (temp->leaf == false)
     {
         display(temp->child[i]);
+    }
+}
+
+//Method to delete in Btree
+void BTree::deletion(int value){
+    int index=0;
+    while(index<n && keys[index]<value){
+        ++index;
+    }
+    if(index<n && keys[index]==value){
+        if(leaf){
+            for(int i=index+1;i<n;i++){
+                keys[i-1]=keys[i];
+            }
+            n--;
+            printf("The ",value," was succesfully deleted from the tree")
+            return;
+        }
+        else{
+            removeFromNonLeaf(index);
+        }
+    }
+    else{
+        printf("The ",value," isnt present in the tree")
+    }
+    
+    int flag=0;
+    if(index==n){
+        flag=1;
+    }
+    
+    if(child[index]->n<MAX_CHILDREN){
+        if(index!=0 && child[index-1]->n>=t){
+            fill(index);
+        }
+        else if(index!=n && child[index+1->n>=t]){
+            
+        }
+        else{
+            if(index!=n){
+                merge(index);
+            }
+            else{
+                merge(index-1);
+            }
+        }
+    }
+    if(flag && index>n){
+        child[index-1]->deletion(value);
+    }
+    else{
+        child[index]->deletion(value);
+    }
+}
+
+
+void Btree::removeFromNonLeaf(index){
+    
+    if(children[index]->n>=MAX_CHILDREN){
+        int pred=getPredecessor(int index)
+        keys[index]=pred;
+        child[index]->deletion(pred);
+    }
+    
+    else if(child[index+1]->n>=MAX_CHILDREN){
+        int succ=getSuccessor(index);
+        keys[index]=succ;
+        child[index+1]->deletion(succ);
+    }
+    
+    else{
+        merge(index);
+        child[index]->deletion(value);
+        
+    }
+    return 0;
+}
+
+int BTree::getSuccessor(int index){
+    struct node*temp=child[index+1];
+        while(!temp->leaf){
+            temp=temp->child[0];
+        }
+    return temp->keys[0]
+}
+
+int BTree::getPredecessor(int index){
+    struct node*temp=child[index];
+        while(!temp->leaf){
+            temp=temp->child[temp->n];
+        }
+    return temp->keys[temp->n-1];
+}
+
+void BTree::fill(int index){
+    if(index!=0 && child[index-1]->n>=MAX_CHILDREN){
+        borrowFromPrev(index);
+    }
+    else if(index!=n && child[index+1]->n>=MAX_CHILDREN){
+        borrowFromNext(index);
+    }
+    else{
+        if(index!=n){
+            merge(index);
+        }
+        else{
+            merge(index-1);
+        }
     }
 }
