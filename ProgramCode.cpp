@@ -71,15 +71,28 @@ int main(void)
         }
         case 2:
         {
+            
             break;
         }
         case 3:
         {
+            printf("Enter a number to search : ");
+            scanf("%d",&num)
+            int res = b.callSearch(int num);
+            if (res==1)
+            {
+                printf("%d found in B-tree",num);
+            }
+            else
+            {
+                printf("%d not found",num);
+            }
             
             break;
         }
         case 4:
         {
+            printf("Displaying the contents in B-tree \n");
             b.callDisplay();
             break;
         }
