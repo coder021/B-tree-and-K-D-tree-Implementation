@@ -42,6 +42,7 @@ public:
     void removeFromNonLeaf(int);
     void borrowFromPrev(int);
     void borrowFromNext(int);
+    void merge(int);
 
     ~BTree()
     {
@@ -415,7 +416,7 @@ void BTree::borrowFromPrev(int index)
     sibling->n -= 1;
     return;
 }
-void BTreeNode::borrowFromNext(int index)
+void BTree::borrowFromNext(int index)
 {
 
     struct node *child1=child[index];
@@ -440,7 +441,7 @@ void BTreeNode::borrowFromNext(int index)
     if (!sibling->leaf)
     {
         for(int i=1; i<=sibling->n; ++i)
-            sibling->child[i-1] = sibling->C[i];
+            sibling->child[i-1] = sibling->child[i];
     }
 
     // Increasing and decreasing the key count of C[idx] and C[idx+1]
@@ -448,5 +449,45 @@ void BTreeNode::borrowFromNext(int index)
     child1->n += 1;
     sibling->n -= 1;
 
+    return;
+}
+
+
+void BTree::merge(int index)
+{
+    struct node *child1 = m_root->child[index];
+    struct node *sibling = m_root->child[index+1];
+
+    // Pulling a key from the current node and inserting it into (t-1)th
+    // position of C[idx]
+    child1->keys[t-1] = keys[index];
+
+    // Copying the keys from C[idx+1] to C[idx] at the end
+    for (int i=0; i<sibling->n; ++i)
+        child1->keys[i+t] = sibling->keys[i];
+
+    // Copying the child pointers from C[idx+1] to C[idx]
+    if (!child1->leaf)
+    {
+        for(int i=0; i<=sibling->n; ++i)
+            child1->child[i+t] = sibling->child[i];
+    }
+
+    // Moving all keys after idx in the current node one step before -
+    // to fill the gap created by moving keys[idx] to C[idx]
+    for (int i=index+1; i<n; ++i)
+        keys[i-1] = keys[i];
+
+    // Moving the child pointers after (idx+1) in the current node one
+    // step before
+    for (int i=index+2; i<=n; ++i)
+        child[i-1] = child[i];
+
+    // Updating the key count of child and the current node
+    child1->n += sibling->n+1;
+    n--;
+
+    // Freeing the memory occupied by sibling
+    deletion(sibling);
     return;
 }
