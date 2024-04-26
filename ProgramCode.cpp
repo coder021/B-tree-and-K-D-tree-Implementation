@@ -80,7 +80,7 @@ int main(void)
         {
             printf("Enter a number to search : ");
             scanf("%d",&num);
-            int res = b.callSearch(int num);
+            int res = b.callSearch(num);
             if (res==1)
             {
                 printf("%d found in B-tree",num);
