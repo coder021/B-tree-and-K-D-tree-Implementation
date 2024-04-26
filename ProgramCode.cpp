@@ -377,3 +377,40 @@ void BTree::fill(int index){
         }
     }
 }
+void BTree::borrowFromPrev(int index)
+{
+
+    struct node *child1=m_root->child[index];
+    struct node *sibling=m_root->child[index-1];
+
+    // The last key from C[idx-1] goes up to the parent and key[idx-1]
+    // from parent is inserted as the first key in C[idx]. Thus, the  loses
+    // sibling one key and child gains one key
+
+    // Moving all key in C[idx] one step ahead
+    for(int i=child1->n-1; i>=0; --i)
+        child1->keys[i+1] = child1->keys[i];
+
+    // If C[idx] is not a leaf, move all its child pointers one step ahead
+    if (child1->leaf!=true)
+    {
+        for(int i=child1->n; i>=0; --i)
+            child1->child[i+1] = child1->child[i];
+    }
+
+    // Setting child's first key equal to keys[idx-1] from the current node
+    child1->keys[0] = keys[index-1];
+
+    // Moving sibling's last child as C[idx]'s first child
+    if(!child1->leaf)
+        child1->child[0] = sibling->child[sibling->n];
+
+    // Moving the key from the sibling to the parent
+    // This reduces the number of keys in the sibling
+    keys[index-1] = sibling->keys[sibling->n-1];
+
+    child1->n += 1;
+    sibling->n -= 1;
+    return;
+}
+
