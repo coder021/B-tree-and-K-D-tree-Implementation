@@ -71,7 +71,9 @@ int main(void)
         }
         case 2:
         {
-            
+            printf("Enter a number to delete : ");
+            scanf("%d",&num);
+            b.deletion(num);
             break;
         }
         case 3:
