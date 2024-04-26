@@ -1,4 +1,4 @@
-#include <iostream> // For printf, scanf, and exit
+#include <iostream> 
 #include <cstdio>
 #include <cstdlib>
 
