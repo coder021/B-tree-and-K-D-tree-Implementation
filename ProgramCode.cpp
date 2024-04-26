@@ -79,7 +79,7 @@ int main(void)
         case 3:
         {
             printf("Enter a number to search : ");
-            scanf("%d",&num)
+            scanf("%d",&num);
             int res = b.callSearch(int num);
             if (res==1)
             {
