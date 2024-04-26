@@ -40,6 +40,8 @@ public:
     int getSuccessor(int);
     void fill(int);
     void removeFromNonLeaf(int);
+    void borrowFromPrev(int);
+    void borrowFromNext(int);
 
     ~BTree()
     {
@@ -413,4 +415,38 @@ void BTree::borrowFromPrev(int index)
     sibling->n -= 1;
     return;
 }
+void BTreeNode::borrowFromNext(int index)
+{
 
+    struct node *child1=child[index];
+    struct node *sibling=child[index+1];
+
+    // keys[idx] is inserted as the last key in C[idx]
+    child1->keys[(child1->n)] = keys[index];
+
+    // Sibling's first child is inserted as the last child
+    // into C[idx]
+    if (!(child1->leaf))
+        child1->child[(child1->n)+1] = sibling->child[0];
+
+    //The first key from sibling is inserted into keys[idx]
+    keys[index] = sibling->keys[0];
+
+    // Moving all keys in sibling one step behind
+    for (int i=1; i<sibling->n; ++i)
+        sibling->keys[i-1] = sibling->keys[i];
+
+    // Moving the child pointers one step behind
+    if (!sibling->leaf)
+    {
+        for(int i=1; i<=sibling->n; ++i)
+            sibling->child[i-1] = sibling->C[i];
+    }
+
+    // Increasing and decreasing the key count of C[idx] and C[idx+1]
+    // respectively
+    child1->n += 1;
+    sibling->n -= 1;
+
+    return;
+}
