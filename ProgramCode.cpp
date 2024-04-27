@@ -101,6 +101,11 @@ int main(void)
         }
         case 3:
         {
+            if(b.count==0)
+            {
+                printf("B-tree empty");
+                break;
+            }
             printf("Enter a number to search : ");
             if (scanf("%d", &num) != 1)
             {
