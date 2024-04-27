@@ -371,8 +371,11 @@ void BTree::deletion(struct node* temp, int value)
         printf(" %d is not found in the Btree\n", value);
         return;
     }
+    else{
+        printf(" %d is not found in the Btree\n", value);
+        return;
+    }
 }
-
 
 void BTree::removeFromNonLeaf(struct node* temp, int index)
 {
