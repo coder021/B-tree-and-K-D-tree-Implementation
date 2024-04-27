@@ -1,6 +1,9 @@
-#include <iostream> 
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
+#include <sstream> // for stringstream
+#include <string> // for string
+#include <cctype>
 
 class KDTree {
 private:
@@ -9,22 +12,23 @@ private:
         Node* left, *right;
     };
 
-    Node* newNode(int* arr, int k);
-    Node* insertRec(Node* root, int* point, unsigned depth, int k);
-    bool arePointsSame(int* point1, int* point2, int k);
-    bool searchRec(Node* root, int* point, unsigned depth, int k);
-    Node* minNode(Node* x, Node* y, Node* z, int d);
-    Node* findMinRec(Node* root, int d, unsigned depth, int k);
-    void copyPoint(int* p1, int* p2, int k);
-    Node* deleteNodeRec(Node* root, int* point, int depth, int k);
+    // Private member functions
+    Node* newNode(int* arr, int k); // Create a new node
+    Node* insertRec(Node* root, int* point, unsigned depth, int k); // Recursive helper function for insertion
+    bool arePointsSame(int* point1, int* point2, int k); // Check if two points are the same
+    bool searchRec(Node* root, int* point, unsigned depth, int k); // Recursive helper function for search
+    Node* minNode(Node* x, Node* y, Node* z, int d); // Find the node with the minimum value along a given dimension
+    Node* findMinRec(Node* root, int d, unsigned depth, int k); // Recursive helper function to find the node with the minimum value along a given dimension
+    void copyPoint(int* p1, int* p2, int k); // Copy the contents of one point to another
+    Node* deleteNodeRec(Node* root, int* point, int depth, int k); // Recursive helper function for deletion
 
 public:
-    KDTree();
-    Node* root;
-    void insert(int* point, int k);
-    bool search(int* point, int k);
-    bool deleteNode(int* point, int k);
-    ~KDTree();
+    KDTree(); // Constructor
+    Node* root; // Root node of the tree
+    void insert(int* point, int k); // Insert a point into the tree
+    bool search(int* point, int k); // Search for a point in the tree
+    bool deleteNode(int* point, int k); // Delete a point from the tree
+    ~KDTree(); // Destructor
 };
 
 int main() {
@@ -43,6 +47,9 @@ int main() {
         break;
     }
 
+    std::string line; // For storing the entire line of input
+    std::istringstream iss; // Input string stream
+
     while (true) {
         printf("\nMenu:\n");
         printf("1. Insert a point\n");
@@ -50,48 +57,116 @@ int main() {
         printf("3. Delete a point\n");
         printf("4. Exit\n");
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+
+        // Read the choice
+        std::getline(std::cin, line); // Read the entire line
+        iss.clear(); // Clear the stream state
+        iss.str(line); // Set the input string stream to the line
+
+        // Attempt to extract a single integer from the input
+        if (!(iss >> choice) || !iss.eof()) {
+            printf("Invalid choice. Please enter a single integer.\n");
+            continue; // Restart the loop to get valid input
+        }
+
         switch (choice) {
             case 1: {
-                printf("Enter the point to insert (each point should have %d coordinates):\n", k);
+            // Insertion operation
+            while (true) {
+                printf("Enter the point to insert (each point should have %d coordinates): ", k);
+                std::getline(std::cin, line); // Read the entire line
+                iss.clear(); // Clear the stream state
+                iss.str(line); // Set the input string stream to the line
                 int* point = new int[k];
-                for (int i = 0; i < k; i++)
-                    scanf("%d", &point[i]);
+                int count = 0; // Counter for the number of coordinates read
+                bool invalidInput = false;
+                for (int i = 0; i < k; i++) {
+                    if (!(iss >> point[i])) {
+                        invalidInput = true;
+                        break; // Break out of the loop when invalid input is encountered
+                    }
+                    count++;
+                }
+                if (count != k || invalidInput || !iss.eof()) {
+                    printf("Invalid input format.\n");
+                    delete[] point; // Free memory
+                    continue; // Stay in the loop for valid input
+                }
                 tree.insert(point, k);
                 printf("Point inserted successfully.\n");
-                delete[] point;
-                break;
+                delete[] point; // Free memory
+                break; // Break out of the loop after successful insertion
             }
+            break;
+        }
             case 2: {
-                if (tree.root == NULL) {
-                    printf("Tree is empty. Cannot perform search.\n");
-                    break;
-                }
-                printf("Enter the point to search (each point should have %d coordinates):\n", k);
+            // Search operation
+            if (tree.root == nullptr) {
+                printf("Tree is empty. Cannot perform search.\n");
+                continue; // Stay in the loop for valid input
+            }
+            while (true) {
+                printf("Enter the point to search (each point should have %d coordinates): ", k);
+                std::getline(std::cin, line); // Read the entire line
+                iss.clear(); // Clear the stream state
+                iss.str(line); // Set the input string stream to the line
                 int* point = new int[k];
-                for (int i = 0; i < k; i++)
-                    scanf("%d", &point[i]);
+                int count = 0; // Counter for the number of coordinates read
+                bool invalidInput = false;
+                for (int i = 0; i < k; i++) {
+                    if (!(iss >> point[i])) {
+                        invalidInput = true;
+                        break; // Break out of the loop when invalid input is encountered
+                    }
+                    count++;
+                }
+                if (count != k || invalidInput || !iss.eof()) {
+                    printf("Invalid input format.\n");
+                    delete[] point; // Free memory
+                    continue; // Stay in the loop for valid input
+                }
                 if (tree.search(point, k))
                     printf("Point found.\n");
                 else
                     printf("Point not found.\n");
-                delete[] point;
-                break;
+                delete[] point; // Free memory
+                break; // Break out of the loop after search is performed
+            }
+            break;
             }
             case 3: {
-                if (tree.root == NULL) {
+                // Deletion operation
+                if (tree.root == nullptr) {
                     printf("Tree is empty. Cannot perform deletion.\n");
-                    break;
+                    continue; // Stay in the loop for valid input
                 }
-                printf("Enter the point to delete (each point should have %d coordinates):\n", k);
-                int* point = new int[k];
-                for (int i = 0; i < k; i++)
-                    scanf("%d", &point[i]);
-                if (tree.deleteNode(point, k))
-                    printf("Point deleted successfully.\n");
-                else
-                    printf("No deletion performed.\n");
-                delete[] point;
+                while (true) {
+                    printf("Enter the point to delete (each point should have %d coordinates): ", k);
+                    std::getline(std::cin, line); // Read the entire line
+                    iss.clear(); // Clear the stream state
+                    iss.str(line); // Set the input string stream to the line
+                    int* point = new int[k];
+                    int count = 0; // Counter for the number of coordinates read
+                    bool invalidInput = false;
+                    for (int i = 0; i < k; i++) {
+                        if (!(iss >> point[i])) {
+                            invalidInput = true;
+                            break; // Break out of the loop when invalid input is encountered
+                        }
+                        count++;
+                    }
+                    if (count != k || invalidInput || !iss.eof()) {
+                        printf("Invalid input format.\n");
+                        delete[] point; // Free memory
+                        continue; // Stay in the loop for valid input
+                    }
+                    if (tree.deleteNode(point, k))
+                        printf("Point deleted successfully.\n");
+                    else
+                        printf("No deletion performed.\n");
+                    delete[] point; // Free memory
+                    break; // Break out of the loop after deletion is performed
+                }
                 break;
             }
             case 4: {
@@ -113,10 +188,11 @@ KDTree::KDTree() {
 }
 
 KDTree::~KDTree() {
-    // Implement destructor
+    // Destructor implementation goes here
 }
 
 KDTree::Node* KDTree::newNode(int* arr, int k) {
+    // Create a new node with the given coordinates
     Node* temp = new Node;
     temp->point = new int[k];
 
@@ -128,10 +204,12 @@ KDTree::Node* KDTree::newNode(int* arr, int k) {
 }
 
 void KDTree::insert(int* point, int k) {
+    // Insert a point into the tree
     root = insertRec(root, point, 0, k);
 }
 
 KDTree::Node* KDTree::insertRec(Node* root, int* point, unsigned depth, int k) {
+    // Recursive helper function for insertion
     if (root == NULL)
         return newNode(point, k);
 
@@ -146,6 +224,7 @@ KDTree::Node* KDTree::insertRec(Node* root, int* point, unsigned depth, int k) {
 }
 
 bool KDTree::arePointsSame(int* point1, int* point2, int k) {
+    // Check if two points are the same
     for (int i = 0; i < k; ++i)
         if (point1[i] != point2[i])
             return false;
@@ -154,10 +233,12 @@ bool KDTree::arePointsSame(int* point1, int* point2, int k) {
 }
 
 bool KDTree::search(int* point, int k) {
+    // Search for a point in the tree
     return searchRec(root, point, 0, k);
 }
 
 bool KDTree::searchRec(Node* root, int* point, unsigned depth, int k) {
+    // Recursive helper function for search
     if (root == NULL)
         return false;
     if (arePointsSame(root->point, point, k))
@@ -172,6 +253,7 @@ bool KDTree::searchRec(Node* root, int* point, unsigned depth, int k) {
 }
 
 KDTree::Node* KDTree::minNode(Node* x, Node* y, Node* z, int d) {
+    // Find the node with the minimum value along a given dimension
     Node* res = x;
     if (y != NULL && y->point[d] < res->point[d])
         res = y;
@@ -181,6 +263,7 @@ KDTree::Node* KDTree::minNode(Node* x, Node* y, Node* z, int d) {
 }
 
 KDTree::Node* KDTree::findMinRec(Node* root, int d, unsigned depth, int k) {
+    // Recursive helper function to find the node with the minimum value along a given dimension
     if (root == NULL)
         return NULL;
 
@@ -198,10 +281,13 @@ KDTree::Node* KDTree::findMinRec(Node* root, int d, unsigned depth, int k) {
 }
 
 void KDTree::copyPoint(int* p1, int* p2, int k) {
+    // Copy the contents of one point to another
     for (int i = 0; i < k; i++)
         p1[i] = p2[i];
 }
+
 bool KDTree::deleteNode(int* point, int k) {
+    // Delete a point from the tree
     if (!search(point, k)) {
         printf("Point not found.\n");
         return false;
@@ -211,6 +297,7 @@ bool KDTree::deleteNode(int* point, int k) {
 }
 
 KDTree::Node* KDTree::deleteNodeRec(Node* root, int* point, int depth, int k) {
+    // Recursive helper function for deletion
     if (root == NULL)
         return NULL;
 
@@ -247,5 +334,3 @@ KDTree::Node* KDTree::deleteNodeRec(Node* root, int* point, int depth, int k) {
         root->right = deleteNodeRec(root->right, point, depth + 1, k);
     return root;
 }
-
-
