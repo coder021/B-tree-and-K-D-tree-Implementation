@@ -1,7 +1,6 @@
-// Program to implement B tree using Single linked list
-
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 class BTree
 {
@@ -15,15 +14,12 @@ private:
         struct node **child;
         bool leaf;
     };
-    struct node *m_root = (struct node *)malloc(sizeof(struct node));
 
 public:
     BTree(int keys, int children)
     {
         MAX_KEYS = keys;
         MAX_CHILDREN = children;
-        // m_root->key = (int *)malloc((2 * MAX_CHILDREN - 1) * sizeof(int));
-        // m_root->child = (struct node **)malloc((2 * MAX_CHILDREN) * sizeof(struct node *));
         m_root = NULL;
     }
 
@@ -31,32 +27,35 @@ public:
     void insertNonFull(struct node *, int);
     void insert(int);
     void splitChild(int, struct node *, struct node *);
-    void deletion(int);
+    void deletion(struct node*,int);
     int callSearch(int);
     struct node *search(struct node *, int);
     void callDisplay();
     void display(struct node *);
-    int getPredeccesor(int);
-    int getSuccessor(int);
-    void fill(int);
-    void removeFromNonLeaf(int);
-    void borrowFromPrev(int);
-    void borrowFromNext(int);
-    void merge(int);
-
-    ~BTree()
-    {
-    }
+    int getPredecessor(struct node*,int);
+    int getSuccessor(struct node*,int);
+    void fill(struct node*,int);
+    void removeFromNonLeaf(struct node*,int);
+    void borrowFromPrev(struct node *,int);
+    void borrowFromNext(struct node *,int);
+    void merge(struct node *,int);
+    struct node *m_root;
+    ~BTree() {}
 };
 
 int main(void)
 {
     int btree_order;
     printf("Enter the order of B Tree: ");
-    scanf("%d", &btree_order);
-    if(tree_order<=1)
+    if (scanf("%d", &btree_order) != 1)
     {
-        printf("Order of Btree below 1");
+        printf("Error: Invalid input. Please enter an integer.\n");
+        while (getchar() != '\n');
+        return 0;
+    }
+    if(btree_order<=1)
+    {
+        printf("Order of b tree can't be lesser than 1 ");
         return 0;
     }
     BTree b(btree_order - 1, btree_order);
@@ -69,22 +68,39 @@ int main(void)
         {
         case 1:
         {
-            printf("Enter number to insert: ");
-            scanf("%d", &num);
-            b.insert(num);
-            break;
+             int num;
+             printf("Enter number to insert: ");
+             if (scanf("%d", &num) != 1)
+             {
+                 printf("Error: Invalid input. Please enter an integer.\n");
+                 while (getchar() != '\n');
+                 break;
+             }
+             b.insert(num);
+             printf("Insertion Successful !");
+             break;
         }
         case 2:
         {
             printf("Enter a number to delete : ");
-            scanf("%d",&num);
-            b.deletion(num);
+            if (scanf("%d", &num) != 1)
+            {
+                 printf("Error: Invalid input. Please enter an integer.\n");
+                 while (getchar() != '\n');
+                 break;
+            }
+            b.deletion(b.m_root,num);
             break;
         }
         case 3:
         {
             printf("Enter a number to search : ");
-            scanf("%d",&num);
+            if (scanf("%d", &num) != 1)
+            {
+                 printf("Error: Invalid input. Please enter an integer.\n");
+                 while (getchar() != '\n');
+                 break;
+            }
             int res = b.callSearch(num);
             if (res==1)
             {
@@ -94,7 +110,6 @@ int main(void)
             {
                 printf("%d not found",num);
             }
-            
             break;
         }
         case 4:
@@ -138,7 +153,6 @@ void BTree::insertNonFull(struct node *node, int num)
             node->key[i + 1] = node->key[i];
             i--;
         }
-
         node->key[i + 1] = num;
         node->n = node->n + 1;
     }
@@ -151,13 +165,11 @@ void BTree::insertNonFull(struct node *node, int num)
         if (node->child[i + 1]->n == 2 * MAX_CHILDREN - 1)
         {
             splitChild(i + 1, node->child[i + 1], node);
-
             if (node->key[i + 1] < num)
             {
                 i++;
             }
         }
-
         insertNonFull(node->child[i + 1], num);
     }
 }
@@ -219,7 +231,6 @@ void BTree::insert(int num)
             {
                 i++;
             }
-
             insertNonFull(newnode->child[i], num);
             m_root = newnode;
         }
@@ -235,7 +246,7 @@ void BTree::insert(int num)
 // Method to call the search method
 int BTree::callSearch(int num)
 {
-    if (search(m_root, num) == NULL)
+    if (search(m_root, num) != NULL)
     {
         return 1;
     }
@@ -293,221 +304,224 @@ void BTree::display(struct node *temp)
     }
 }
 
-//Method to delete in Btree
-void BTree::deletion(int value){
-    int index=0;
-    while(index<n && keys[index]<value){
+void BTree::deletion(struct node* temp, int value)
+{
+    if(m_root==NULL)
+    {
+        printf("B-tree empty");
+        return;
+    }
+    int index = 0;
+    while (index < temp->n && temp->key[index] < value)
+    {
         ++index;
     }
-    if(index<n && keys[index]==value){
-        if(leaf){
-            for(int i=index+1;i<n;i++){
-                keys[i-1]=keys[i];
+    if (index < temp->n && temp->key[index] == value)
+    {
+        if (temp->leaf)
+        {
+            for (int i = index + 1; i < temp->n; i++)
+            {
+                temp->key[i - 1] = temp->key[i];
             }
-            n--;
-            printf("The ",value," was succesfully deleted from the tree")
+            temp->n--;
+            printf("The %d was successfully deleted from the tree\n", value);
             return;
         }
-        else{
-            removeFromNonLeaf(index);
+        else
+        {
+            removeFromNonLeaf(temp, index);
         }
     }
-    else{
-        printf("The ",value," isnt present in the tree")
-    }
-    
-    int flag=0;
-    if(index==n){
-        flag=1;
-    }
-    
-    if(child[index]->n<MAX_CHILDREN){
-        if(index!=0 && child[index-1]->n>=t){
-            fill(index);
-        }
-        else if(index!=n && child[index+1->n>=t]){
-            
-        }
-        else{
-            if(index!=n){
-                merge(index);
-            }
-            else{
-                merge(index-1);
-            }
-        }
-    }
-    if(flag && index>n){
-        child[index-1]->deletion(value);
-    }
-    else{
-        child[index]->deletion(value);
-    }
-}
-
-
-void Btree::removeFromNonLeaf(index){
-    
-    if(children[index]->n>=MAX_CHILDREN){
-        int pred=getPredecessor(int index)
-        keys[index]=pred;
-        child[index]->deletion(pred);
-    }
-    
-    else if(child[index+1]->n>=MAX_CHILDREN){
-        int succ=getSuccessor(index);
-        keys[index]=succ;
-        child[index+1]->deletion(succ);
-    }
-    
-    else{
-        merge(index);
-        child[index]->deletion(value);
-        
-    }
-    return 0;
-}
-
-int BTree::getSuccessor(int index){
-    struct node*temp=child[index+1];
-        while(!temp->leaf){
-            temp=temp->child[0];
-        }
-    return temp->keys[0]
-}
-
-int BTree::getPredecessor(int index){
-    struct node*temp=child[index];
-        while(!temp->leaf){
-            temp=temp->child[temp->n];
-        }
-    return temp->keys[temp->n-1];
-}
-
-void BTree::fill(int index){
-    if(index!=0 && child[index-1]->n>=MAX_CHILDREN){
-        borrowFromPrev(index);
-    }
-    else if(index!=n && child[index+1]->n>=MAX_CHILDREN){
-        borrowFromNext(index);
-    }
-    else{
-        if(index!=n){
-            merge(index);
-        }
-        else{
-            merge(index-1);
-        }
-    }
-}
-void BTree::borrowFromPrev(int index)
-{
-
-    struct node *child1=m_root->child[index];
-    struct node *sibling=m_root->child[index-1];
-
-    // The last key from C[idx-1] goes up to the parent and key[idx-1]
-    // from parent is inserted as the first key in C[idx]. Thus, the  loses
-    // sibling one key and child gains one key
-
-    // Moving all key in C[idx] one step ahead
-    for(int i=child1->n-1; i>=0; --i)
-        child1->keys[i+1] = child1->keys[i];
-
-    // If C[idx] is not a leaf, move all its child pointers one step ahead
-    if (child1->leaf!=true)
+    else
     {
-        for(int i=child1->n; i>=0; --i)
-            child1->child[i+1] = child1->child[i];
+        bool foundInChild = (index < temp->n) ? false : true;
+
+        if (temp->child[index] != NULL)
+            deletion(temp->child[index], value);
+
+        if (!foundInChild)
+        {
+            if (temp->child[index + 1] != NULL)
+                deletion(temp->child[index + 1], value);
+        }
     }
 
-    // Setting child's first key equal to keys[idx-1] from the current node
-    child1->keys[0] = keys[index-1];
-
-    // Moving sibling's last child as C[idx]'s first child
-    if(!child1->leaf)
-        child1->child[0] = sibling->child[sibling->n];
-
-    // Moving the key from the sibling to the parent
-    // This reduces the number of keys in the sibling
-    keys[index-1] = sibling->keys[sibling->n-1];
-
-    child1->n += 1;
-    sibling->n -= 1;
-    return;
+    if (temp->child[index] != NULL && temp->child[index]->n < MAX_CHILDREN)
+    {
+        fill(temp, index);
+    }
+    else if (index == temp->n)
+    {
+        printf("The %d is not found in the Btree\n", value);
+        return;
+    }
 }
-void BTree::borrowFromNext(int index)
-{
 
-    struct node *child1=child[index];
-    struct node *sibling=child[index+1];
+
+void BTree::removeFromNonLeaf(struct node* temp, int index)
+{
+    if (temp->child[index]->n >= MAX_CHILDREN)
+    {
+        int pred = getPredecessor(temp, index);
+        temp->key[index] = pred;
+        deletion(temp->child[index], pred);
+    }
+    else if (temp->child[index + 1]->n >= MAX_CHILDREN)
+    {
+        int succ = getSuccessor(temp, index);
+        temp->key[index] = succ;
+        deletion(temp->child[index + 1], succ);
+    }
+    else
+    {
+        merge(temp, index);
+        deletion(temp->child[index], temp->key[index]);
+    }
+}
+
+
+int BTree::getSuccessor(struct node* temp, int index)
+{
+    struct node* current = temp->child[index + 1];
+    while (!current->leaf)
+    {
+        current = current->child[0];
+    }
+    return current->key[0];
+}
+
+int BTree::getPredecessor(struct node* temp, int index)
+{
+    struct node* current = temp->child[index];
+    while (!current->leaf)
+    {
+        current = current->child[current->n-1];
+    }
+    return current->key[current->n - 1];
+}
+
+void BTree::fill(struct node* temp, int index)
+{
+    if (index != 0 && temp->child[index - 1]->n >= MAX_CHILDREN)
+    {
+        borrowFromPrev(temp,index);
+    }
+    else if (index != temp->n && temp->child[index + 1]->n >= MAX_CHILDREN)
+    {
+        borrowFromNext(temp,index);
+    }
+    else
+    {
+        if (index != temp->n)
+        {
+            merge(temp,index);
+        }
+        else
+        {
+            merge(temp,index - 1);
+        }
+    }
+}
+
+
+void BTree::borrowFromPrev(struct node *current, int index)
+{
+    struct node *child = current->child[index];
+    struct node *sibling = current->child[index - 1];
+
+    // Move the last key from the sibling node to the current node
+    for (int i = child->n - 1; i >= 0; --i)
+        child->key[i + 1] = child->key[i];
+
+    // If the child node is not a leaf, move the last child pointer from the sibling to the child
+    if (!child->leaf)
+    {
+        for (int i = child->n; i >= 0; --i)
+            child->child[i + 1] = child->child[i];
+    }
+
+    // Set the first key of the current node to the key from the parent node
+    child->key[0] = current->key[index - 1];
+
+    // If the child node is not a leaf, set its first child pointer to the last child of the sibling
+    if (!child->leaf)
+        child->child[0] = sibling->child[sibling->n];
+
+    // Move the last key of the sibling to the parent node
+    current->key[index - 1] = sibling->key[sibling->n - 1];
+
+    // Adjust the number of keys in the child and the sibling nodes
+    child->n += 1;
+    sibling->n -= 1;
+
+    // If the sibling node is not a leaf, recursively call borrowFromPrev on it
+    if (!sibling->leaf)
+        borrowFromPrev(sibling, sibling->n + 1);
+}
+
+void BTree::borrowFromNext(struct node *current, int index)
+{
+    struct node *child1 = current->child[index];
+    struct node *sibling = current->child[index + 1];
 
     // keys[idx] is inserted as the last key in C[idx]
-    child1->keys[(child1->n)] = keys[index];
+    child1->key[(child1->n)] = current->key[index];
 
-    // Sibling's first child is inserted as the last child
-    // into C[idx]
+    // Sibling's first child is inserted as the last child into C[idx]
     if (!(child1->leaf))
-        child1->child[(child1->n)+1] = sibling->child[0];
+        child1->child[(child1->n) + 1] = sibling->child[0];
 
-    //The first key from sibling is inserted into keys[idx]
-    keys[index] = sibling->keys[0];
+    // The first key from sibling is inserted into keys[idx]
+    current->key[index] = sibling->key[0];
 
     // Moving all keys in sibling one step behind
-    for (int i=1; i<sibling->n; ++i)
-        sibling->keys[i-1] = sibling->keys[i];
+    for (int i = 1; i < sibling->n; ++i)
+        sibling->key[i - 1] = sibling->key[i];
 
     // Moving the child pointers one step behind
     if (!sibling->leaf)
     {
-        for(int i=1; i<=sibling->n; ++i)
-            sibling->child[i-1] = sibling->child[i];
+        for (int i = 1; i <= sibling->n; ++i)
+            sibling->child[i - 1] = sibling->child[i];
     }
 
-    // Increasing and decreasing the key count of C[idx] and C[idx+1]
-    // respectively
+    // Increasing and decreasing the key count of C[idx] and C[idx+1] respectively
     child1->n += 1;
     sibling->n -= 1;
-
-    return;
 }
 
-
-void BTree::merge(int index)
+void BTree::merge(struct node *current, int idx)
 {
-    struct node *child1 = m_root->child[index];
-    struct node *sibling = m_root->child[index+1];
+    struct node *child1 = current->child[idx];
+    struct node *child2 = current->child[idx + 1];
 
-    // Pulling a key from the current node and inserting it into (t-1)th
-    // position of C[idx]
-    child1->keys[t-1] = keys[index];
+    // Pulling a key from the current node and inserting it into (t-1)th position of C[idx]
+    child1->key[MAX_CHILDREN - 1] = current->key[idx];
 
     // Copying the keys from C[idx+1] to C[idx] at the end
-    for (int i=0; i<sibling->n; ++i)
-        child1->keys[i+t] = sibling->keys[i];
+    for (int i = 0; i < child2->n; ++i)
+        child1->key[i + MAX_CHILDREN] = child2->key[i];
 
     // Copying the child pointers from C[idx+1] to C[idx]
     if (!child1->leaf)
     {
-        for(int i=0; i<=sibling->n; ++i)
-            child1->child[i+t] = sibling->child[i];
+        for (int i = 0; i <= child2->n; ++i)
+            child1->child[i + MAX_CHILDREN] = child2->child[i];
     }
 
-    // Moving all keys after idx in the current node one step before -
-    // to fill the gap created by moving keys[idx] to C[idx]
-    for (int i=index+1; i<n; ++i)
-        keys[i-1] = keys[i];
+    // Moving all keys after idx in the current node one step before
+    for (int i = idx + 1; i < current->n; ++i)
+        current->key[i - 1] = current->key[i];
 
-    // Moving the child pointers after (idx+1) in the current node one
-    // step before
-    for (int i=index+2; i<=n; ++i)
-        child[i-1] = child[i];
+    // Moving the child pointers after (idx+1) in the current node one step before
+    for (int i = idx + 2; i <= current->n; ++i)
+        current->child[i - 1] = current->child[i];
 
     // Updating the key count of child and the current node
-    child1->n += sibling->n+1;
-    n--;
+    child1->n += child2->n + 1;
+    current->n--;
 
-    // Freeing the memory occupied by sibling
-    deletion(sibling);
-    return;
+    // Freeing the memory occupied by child2
+    free(child2);
 }
