@@ -126,8 +126,15 @@ int main(void)
         }
         case 4:
         {
-            printf("Displaying the contents in B-tree \n");
-            b.callDisplay();
+            if(b.count==0)
+            {
+                printf("Btree empty\n");
+            }
+            else
+            {
+                printf("Displaying the contents in B-tree \n");
+                b.callDisplay();
+            }
             break;
         }
         case 5:
@@ -297,11 +304,6 @@ void BTree::callDisplay()
 void BTree::display(struct node *temp)
 {
     int i;
-    if (m_root == NULL)
-    {
-        printf("B Tree is empty!\n");
-        return;
-    }
     for (i = 0; i < temp->n; i++)
     {
         if (temp->leaf == false)
