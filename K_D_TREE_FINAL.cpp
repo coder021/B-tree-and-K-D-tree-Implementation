@@ -38,15 +38,17 @@ int main() {
     // Loop until valid input for k is provided
     while (true) {
         printf("Enter the value of k (number of dimensions): ");
-        if (scanf("%d", &k) != 1 || getchar() != '\n' ) {
+        if (scanf("%d", &k) != 1 || getchar() != '\n') {
             printf("Invalid input. Please enter a single integer for k.\n");
             // Clear input buffer
             while (getchar() != '\n');
             continue;
         }
-        if(k<1){
+         if(k<1){
             printf("Invalid input. Please enter an integer greater than 0 for k.\n");
+
             continue;}
+
         break;
     }
 
@@ -91,11 +93,7 @@ int main() {
                     count++;
                 }
                 if (count != k || invalidInput || !iss.eof()) {
-                    if (count < k) {
-                        printf("Invalid input format. Your input is less than required. Enter only %d element(s).\n", k);
-                    } else {
-                        printf("Invalid input format. Your input is more than required. Enter only %d element(s).\n", k);
-                        }
+                    printf("Invalid input format.\n");
                     delete[] point; // Free memory
                     continue; // Stay in the loop for valid input
                 }
@@ -128,11 +126,7 @@ int main() {
                     count++;
                 }
                 if (count != k || invalidInput || !iss.eof()) {
-                     if (count < k) {
-                        printf("Invalid input format. Your input is less than required. Enter only %d element(s).\n", k);
-                    } else {
-                        printf("Invalid input format. Your input is more than required. Enter only %d element(s).\n", k);
-                        }
+                    printf("Invalid input format.\n");
                     delete[] point; // Free memory
                     continue; // Stay in the loop for valid input
                 }
@@ -167,11 +161,7 @@ int main() {
                         count++;
                     }
                     if (count != k || invalidInput || !iss.eof()) {
-                        if (count < k) {
-                        printf("Invalid input format. Your input is less than required. Enter only %d element(s).\n", k);
-                    } else {
-                        printf("Invalid input format. Your input is more than required. Enter only %d element(s).\n", k);
-                        }
+                        printf("Invalid input format.\n");
                         delete[] point; // Free memory
                         continue; // Stay in the loop for valid input
                     }
