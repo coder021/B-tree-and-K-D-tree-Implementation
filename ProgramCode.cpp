@@ -22,7 +22,7 @@ public:
         MAX_CHILDREN = children;
         m_root = NULL;
     }
-
+    int count = 0;
     struct node *createNode(bool);
     void insertNonFull(struct node *, int);
     void insert(int);
@@ -77,16 +77,23 @@ int main(void)
                  break;
              }
              b.insert(num);
+             b.count=b.count+1;
              printf("Insertion Successful !");
              break;
         }
         case 2:
         {
+            if(b.count==0)
+            {
+                printf("B-tree empty");
+                break;
+            }
             printf("Enter a number to delete : ");
             if (scanf("%d", &num) != 1)
             {
                  printf("Error: Invalid input. Please enter an integer.\n");
                  while (getchar() != '\n');
+
                  break;
             }
             b.deletion(b.m_root,num);
@@ -325,7 +332,8 @@ void BTree::deletion(struct node* temp, int value)
                 temp->key[i - 1] = temp->key[i];
             }
             temp->n--;
-            printf("The %d was successfully deleted from the tree\n", value);
+            printf(" %d was successfully deleted from the tree\n", value);
+            count--;
             return;
         }
         else
@@ -353,7 +361,7 @@ void BTree::deletion(struct node* temp, int value)
     }
     else if (index == temp->n)
     {
-        printf("The %d is not found in the Btree\n", value);
+        printf(" %d is not found in the Btree\n", value);
         return;
     }
 }
