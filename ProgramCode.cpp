@@ -54,6 +54,11 @@ int main(void)
     int btree_order;
     printf("Enter the order of B Tree: ");
     scanf("%d", &btree_order);
+    if(tree_order<=1)
+    {
+        printf("Order of Btree below 1");
+        return 0;
+    }
     BTree b(btree_order - 1, btree_order);
     int ch = 0, num;
     while (ch != 5)
