@@ -63,7 +63,12 @@ int main(void)
     while (ch != 5)
     {
         printf("\nMenu:\n1. Insert\n2. Delete\n3. Search\n4. Display\n5. Exit\n\nEnter your choice: ");
-        scanf("%d", &ch);
+        if (scanf("%d", &ch) != 1)
+        {
+            printf("Error: Invalid input. Please enter an integer.\n");
+            while (getchar() != '\n');
+            continue;
+        }
         switch (ch)
         {
         case 1:
