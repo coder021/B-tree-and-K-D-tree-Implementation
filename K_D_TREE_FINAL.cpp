@@ -1,14 +1,14 @@
 #include <iostream>
 #include <cstdio>
 #include <cstdlib>
-#include <sstream> // for stringstream
-#include <string> // for string
+#include <sstream> 
+#include <string> 
 #include <cctype>
 
 class KDTree {
 private:
     struct Node {
-        int* point; // To store k dimensional point
+        int* point; 
         Node* left, *right;
     };
 
@@ -28,7 +28,6 @@ public:
     void insert(int* point, int k); // Insert a point into the tree
     bool search(int* point, int k); // Search for a point in the tree
     bool deleteNode(int* point, int k); // Delete a point from the tree
-    ~KDTree(); // Destructor
 };
 
 int main() {
@@ -190,10 +189,6 @@ int main() {
 
 KDTree::KDTree() {
     root = NULL;
-}
-
-KDTree::~KDTree() {
-    // Destructor implementation goes here
 }
 
 KDTree::Node* KDTree::newNode(int* arr, int k) {
