@@ -12,7 +12,7 @@ Boundary Conditions of B-Tree
 Includes algorithm for implementation of btree
 Time complexity analysis for member functions
 application of btree 
-# kd-tree documentation
+# kd-tree 
 Includes algorithm for implementation of kdtree
 Time complexity analysis for member functions
 application of kdtree 
