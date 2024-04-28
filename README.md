@@ -8,3 +8,12 @@ Boundary Conditions of K-Dimensional Tree
 Test Cases of B-Tree
 # Boundary Conditions(B-Tree)
 Boundary Conditions of B-Tree
+# b-tree documentation
+Includes algorithm for implementation of btree
+Time complexity analysis for member functions
+application of btree 
+# kd-tree documentation
+Includes algorithm for implementation of kdtree
+Time complexity analysis for member functions
+application of kdtree 
+
