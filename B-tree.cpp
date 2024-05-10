@@ -9,8 +9,8 @@ private:
     int MAX_CHILDREN;
     struct node
     {
-        int n;    // no. of keys in the node
-        int *key; //
+        int n;    
+        int *key; 
         struct node **child;
         bool leaf;
     };
