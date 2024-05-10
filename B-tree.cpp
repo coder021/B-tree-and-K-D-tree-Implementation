@@ -322,7 +322,7 @@ void BTree::display(struct node *temp)
         display(temp->child[i]);
     }
 }
-
+//Method to delete a node from btree//
 void BTree::deletion(struct node* temp, int value)
 {
     if(m_root==NULL)
@@ -423,7 +423,7 @@ int BTree::getPredecessor(struct node* temp, int index)
     }
     return current->key[current->n - 1];
 }
-
+//Method to balance the btree during deletion//
 void BTree::fill(struct node* temp, int index)
 {
     if (index != 0 && temp->child[index - 1]->n >= MAX_CHILDREN)
@@ -447,7 +447,7 @@ void BTree::fill(struct node* temp, int index)
     }
 }
 
-
+//Method to borrow from the previous sibling node//
 void BTree::borrowFromPrev(struct node *current, int index)
 {
     struct node *child = current->child[index];
@@ -482,7 +482,7 @@ void BTree::borrowFromPrev(struct node *current, int index)
     if (!sibling->leaf)
         borrowFromPrev(sibling, sibling->n + 1);
 }
-
+//Method to borrow from next sibling node//
 void BTree::borrowFromNext(struct node *current, int index)
 {
     struct node *child1 = current->child[index];
@@ -513,7 +513,7 @@ void BTree::borrowFromNext(struct node *current, int index)
     child1->n += 1;
     sibling->n -= 1;
 }
-
+//Method to merge nodes in btree//
 void BTree::merge(struct node *current, int idx)
 {
     struct node *child1 = current->child[idx];
