@@ -265,7 +265,7 @@ void BTree::insert(int num)
     }
 }
 
-// Method to delete in a b tree
+
 
 // Method to call the search method
 int BTree::callSearch(int num)
@@ -381,7 +381,7 @@ void BTree::deletion(struct node* temp, int value)
         return;
     }
 }
-
+//Method to delete number from non leaf node
 void BTree::removeFromNonLeaf(struct node* temp, int index)
 {
     if (temp->child[index]->n >= MAX_CHILDREN)
@@ -403,7 +403,7 @@ void BTree::removeFromNonLeaf(struct node* temp, int index)
     }
 }
 
-
+//Method to get successor of required node
 int BTree::getSuccessor(struct node* temp, int index)
 {
     struct node* current = temp->child[index + 1];
@@ -413,7 +413,7 @@ int BTree::getSuccessor(struct node* temp, int index)
     }
     return current->key[0];
 }
-
+//Method to get predecessor of required node
 int BTree::getPredecessor(struct node* temp, int index)
 {
     struct node* current = temp->child[index];
